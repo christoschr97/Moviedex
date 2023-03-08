@@ -28,9 +28,10 @@ class App extends Component {
           <p>
             Hi <span className="underline">{this.state.name}</span>, welcome to React!
           </p>
-          <button onClick={() => {
-            this.changeName();
-          }}>
+          <button 
+            onClick={() => {
+              this.changeName();
+            }}>
             Change Name
           </button>
         </header>
