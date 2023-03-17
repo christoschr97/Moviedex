@@ -6,19 +6,19 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      movies: [
-        {
-          title: 'The Godfather',
-        }, 
-        {
-          title: 'Dracula',
-        }, 
-        {
-          title: 'The Godfather: Part II',
-        },    
-      ] 
+      movies: [] 
     }
   }
+
+  componentDidMount() {
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then(response => {
+        response.json();
+        // console.log(response);
+      })
+      .then(movies => this.setState({ movies }))    
+  }
+
 
   render() {
     return (
@@ -26,7 +26,7 @@ class App extends Component {
         <h1 className="text-3xl">Movie List</h1>
         {
           this.state.movies.map((movie) => {
-            return <h1>{movie.title}</h1>
+            return <h1 key={movie.id}>{movie.title}</h1>
           })
         }
       </div>
