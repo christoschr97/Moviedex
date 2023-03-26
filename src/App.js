@@ -7,6 +7,7 @@ class App extends Component {
 
     this.state = {
       movies: [],
+      filteredMovies: [],
     };
   }
 
@@ -26,6 +27,7 @@ class App extends Component {
           }
         );
       });
+
   }
 
   render() {
@@ -34,10 +36,18 @@ class App extends Component {
         <input
           type="search"
           placeholder="Search Movies"
-          className="block w-4/12 mx-auto my-8 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          className="search-box block w-4/12 mx-auto my-8 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          onChange={
+            (e) => {
+              let filteredMovies = this.state.movies.filter((movie) => movie.name.includes(e.target.value));
+              this.setState(() => {
+                return { filteredMovies: filteredMovies }
+              })
+            }
+          }
         />
         <h1 className="text-3xl">Movie List</h1>
-        {this.state.movies.map((movie) => {
+        {this.state.filteredMovies.map((movie) => {
           return <h1 key={movie.id}>{movie.name}</h1>;
         })}
       </div>
