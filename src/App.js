@@ -1,5 +1,10 @@
 import "./App.css";
 import { Component } from "react";
+import CardList from "./components/card-list/card-list.component";
+import SearchBox from "./components/search-box/search-box.component";
+import Navbar from "./components/navbar/navbar.component";
+import { getMovies } from "./services/movies.service";
+import Header from "./components/header/header.component";
 
 class App extends Component {
   constructor() {
@@ -7,49 +12,48 @@ class App extends Component {
 
     this.state = {
       movies: [],
-      filteredMovies: [],
+      searchField: "",
     };
   }
 
   componentDidMount() {
-    fetch("https://jsonplaceholder.typicode.com/users")
-      .then((response) => {
-        console.log(response);
-        return response.json();
-      })
-      .then((data) => {
-        this.setState(
-          () => {
-            return { movies: data };
-          },
-          () => {
-            console.log(this.state);
-          }
-        );
-      });
+    console.log(getMovies());
 
+    getMovies().then((data) => {
+      this.setState(
+        () => {
+          return { movies: data };
+        },
+        () => {
+          console.log(this.state.movies);
+        }
+      );
+    });
   }
 
+  handleChange = (e) => {
+    this.setState({ searchField: e.target.value });
+  };
+
   render() {
+    const { movies, searchField } = this.state;
+    const filteredMovies = movies.filter((movie) => {
+      return movie.title.toLowerCase().includes(searchField.toLowerCase());
+    });
+
+    console.log(this.state);
     return (
-      <div className="App container mx-auto">
-        <input
-          type="search"
-          placeholder="Search Movies"
-          className="search-box block w-4/12 mx-auto my-8 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-          onChange={
-            (e) => {
-              let filteredMovies = this.state.movies.filter((movie) => movie.name.includes(e.target.value));
-              this.setState(() => {
-                return { filteredMovies: filteredMovies }
-              })
-            }
-          }
-        />
-        <h1 className="text-3xl">Movie List</h1>
-        {this.state.filteredMovies.map((movie) => {
-          return <h1 key={movie.id}>{movie.name}</h1>;
-        })}
+      <div className="App mx-auto">
+        <Navbar />
+        <div>
+          <Header />
+          <SearchBox
+            onChangeHandler={this.handleChange}
+            placeholder={"Search Box"}
+            className="custom-class"
+          />
+          <CardList movies={filteredMovies} />
+        </div>
       </div>
     );
   }
