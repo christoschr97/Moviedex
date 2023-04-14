@@ -1,62 +1,50 @@
 import "./App.css";
-import { Component } from "react";
+import { useState, useEffect } from "react";
 import CardList from "./components/card-list/card-list.component";
 import SearchBox from "./components/search-box/search-box.component";
 import Navbar from "./components/navbar/navbar.component";
 import { getMovies } from "./services/movies.service";
 import Header from "./components/header/header.component";
 
-class App extends Component {
-  constructor() {
-    super();
+const App = () => {
+  const [searchField, setSearchField] = useState("a"); // [value that we want to store, function to update the value]
+  const [movies, setMovies] = useState([]);
+  const [filteredMovies, setFilteredMovies] = useState(movies);
 
-    this.state = {
-      movies: [],
-      searchField: "",
-    };
-  }
+  console.log("render");
 
-  componentDidMount() {
-    console.log(getMovies());
-
-    getMovies().then((data) => {
-      this.setState(
-        () => {
-          return { movies: data };
-        },
-        () => {
-          console.log(this.state.movies);
-        }
-      );
-    });
-  }
-
-  handleChange = (e) => {
-    this.setState({ searchField: e.target.value });
+  const onSearchChange = (e) => {
+    const searchFieldString = e.target.value.toLowerCase();
+    setSearchField(searchFieldString);
   };
 
-  render() {
-    const { movies, searchField } = this.state;
-    const filteredMovies = movies.filter((movie) => {
-      return movie.title.toLowerCase().includes(searchField.toLowerCase());
+  useEffect(() => {
+    getMovies().then((data) => {
+      setMovies(data);
     });
+  }, []); //empty array says that this effect should only run once when the component mounts.
 
-    console.log(this.state);
-    return (
-      <div className="App mx-auto">
-        <Navbar />
-        <div>
-          <Header />
-          <SearchBox
-            onChangeHandler={this.handleChange}
-            placeholder={"Search Box"}
-            className="custom-class"
-          />
-          <CardList movies={filteredMovies} />
-        </div>
+  useEffect(() => {
+    const filteredMovies = movies.filter((movie) => {
+      return movie.title.toLowerCase().includes(searchField);
+    });
+    setFilteredMovies(filteredMovies);
+  }, [searchField, movies]); //this effect will run whenever the searchField or movies state changes
+
+  return (
+    <div className="App mx-auto">
+      <Navbar />
+      <div>
+        <Header />
+        <SearchBox
+          onChangeHandler={onSearchChange}
+          placeholder={"Search Box"}
+          className="custom-class"
+        />
+        <CardList movies={filteredMovies} />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 export default App;

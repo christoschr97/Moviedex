@@ -1,5 +1,3 @@
-import React from "react";
-
 const Navbar = () => {
   return (
     <nav className="bg-gradient-to-r from-[rgba(30,28,132,1)] via-[rgba(93,53,177,1)] to-[rgba(104,58,183,1)] text-white p-4">
